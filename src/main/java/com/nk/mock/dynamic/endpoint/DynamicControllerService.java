@@ -44,15 +44,6 @@ public class DynamicControllerService {
         return uri + "_" + method;
     }
 
-    /*public ResponseEntity<?> getResponse(String uri, String method, HttpServletRequest request) throws IOException {
-        if (uri.equals("/config")) {
-            readAndStoreData(method, request);
-            return new ResponseEntity<>("Execution successful", HttpStatus.OK);
-        }
-        // TODO: call init() after adding new path
-
-    }*/
-
     private void readAndStoreData(String method, HttpServletRequest request) throws IOException {
         InputStream inputStream = request.getInputStream();
         StringBuilder stringBuilder = new StringBuilder();
@@ -116,7 +107,24 @@ public class DynamicControllerService {
         return null;
     }
 
-    public ResponseEntity<?> storeNewEndPoint(EndPointRequest request) {
+    public ResponseEntity<?> getEndPoint(Long id) {
+        Optional<EndPoint> endPointOpt = endPointRepository.findById(id);
+        if (endPointOpt.isEmpty())
+            return new ResponseEntity<>("Invalid Endpoint ID", HttpStatus.NOT_FOUND);
+
+        EndPoint endPoint = endPointOpt.get();
+        EndPointDto endPointDto = new EndPointDto();
+        endPointDto.setTitle(endPoint.getTitle());
+        endPointDto.setPath(endPointDto.getPath());
+        endPointDto.setMethod(endPointDto.getMethod());
+
+        List<EndPointRes> resList = resRepository.findAllByEndPoint(endPoint);
+        endPointDto.setResponseList(resList.stream().map(ResponseDto::new).toList());
+
+        return new ResponseEntity<>(endPointDto, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> storeNewEndPoint(EndPointDto request) {
         Optional<EndPoint> endPointOpt = endPointRepository.findByPathAndMethod(request.getPath(), request.getMethod());
         if (endPointOpt.isPresent())
             return new ResponseEntity<>("EndPoint already exist : " + request.getMethod() + " " + request.getPath(), HttpStatus.BAD_REQUEST);
@@ -130,7 +138,7 @@ public class DynamicControllerService {
 
         if (!request.getResponseList().isEmpty()) {
             List<EndPointRes> list = new ArrayList<>();
-            for (ResponseRequest req : request.getResponseList()) {
+            for (ResponseDto req : request.getResponseList()) {
                 EndPointRes res = EndPointRes.builder()
                         .endPoint(endPoint)
                         .res(req.getRes())
@@ -145,7 +153,7 @@ public class DynamicControllerService {
         return new ResponseEntity<>("Endpoint added", HttpStatus.OK);
     }
 
-    public ResponseEntity<?> storeNewResponse(ResponseRequest request) {
+    public ResponseEntity<?> storeNewResponse(ResponseDto request) {
         Optional<EndPoint> endPointOpt = endPointRepository.findById(request.getEndPointId());
         if (endPointOpt.isEmpty())
             return new ResponseEntity<>("Invalid Endpoint", HttpStatus.BAD_REQUEST);

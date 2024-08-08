@@ -1,6 +1,5 @@
 package com.nk.mock.dynamic.endpoint;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +14,22 @@ public class DynamicController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getRes(HttpServletRequest request) {
-        String uri = request.getRequestURI();
+    public ResponseEntity<?> getEndpoints() {
         return service.getEndPoint();
     }
 
+    @GetMapping("")
+    public ResponseEntity<?> getEndpoint(@RequestParam(value = "id") Long id) {
+        return service.getEndPoint(id);
+    }
+
     @PostMapping("")
-    public ResponseEntity<?> storeNewEndPoint(@RequestBody @Valid EndPointRequest request) {
+    public ResponseEntity<?> storeNewEndPoint(@RequestBody @Valid EndPointDto request) {
         return service.storeNewEndPoint(request);
     }
 
     @PostMapping("/response")
-    public ResponseEntity<?> addNewResponse(@RequestBody @Valid ResponseRequest request) {
+    public ResponseEntity<?> addNewResponse(@RequestBody @Valid ResponseDto request) {
         return service.storeNewResponse(request);
     }
 

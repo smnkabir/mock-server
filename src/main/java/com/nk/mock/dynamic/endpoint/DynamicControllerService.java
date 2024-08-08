@@ -12,10 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DynamicControllerService {
@@ -101,7 +98,32 @@ public class DynamicControllerService {
     }
 
     public ResponseEntity<?> storeNewEndPoint(EndPointRequest request) {
-        return null;
+        Optional<EndPoint> endPointOpt = endPointRepository.findByPathAndMethod(request.getPath(), request.getMethod());
+        if (endPointOpt.isPresent())
+            return new ResponseEntity<>("EndPoint already exist : " + request.getMethod() + " " + request.getPath(), HttpStatus.BAD_REQUEST);
+
+        EndPoint endPoint = EndPoint.builder()
+                .title(request.getTitle())
+                .path(request.getPath())
+                .method(request.getMethod())
+                .build();
+        endPoint = endPointRepository.save(endPoint);
+
+        if (!request.getResponseList().isEmpty()) {
+            List<EndPointRes> list = new ArrayList<>();
+            for (ResponseRequest req : request.getResponseList()) {
+                EndPointRes res = EndPointRes.builder()
+                        .endPoint(endPoint)
+                        .res(req.getRes())
+                        .statusCode(req.getStatusCode())
+                        .status(0)
+                        .build();
+                list.add(res);
+            }
+            resRepository.saveAll(list);
+        }
+        init();
+        return new ResponseEntity<>("Endpoint added", HttpStatus.OK);
     }
 
     public ResponseEntity<?> storeNewResponse(ResponseRequest request) {

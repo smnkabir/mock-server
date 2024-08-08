@@ -140,4 +140,9 @@ public class DynamicControllerService {
         resRepository.save(res);
         return new ResponseEntity<>("Response added", HttpStatus.OK);
     }
+
+    public ResponseEntity<?> removeRes(ResDeleteRequest request) {
+        resRepository.delete(new EndPointRes(request.getResId()));
+        return new ResponseEntity<>("Response removed", HttpStatus.OK);
+    }
 }

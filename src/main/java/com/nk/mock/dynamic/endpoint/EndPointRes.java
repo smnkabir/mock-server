@@ -21,4 +21,8 @@ public class EndPointRes {
     private int statusCode;
     private String res;
     private int status;
+
+    public EndPointRes(Long resId) {
+        id = resId;
+    }
 }

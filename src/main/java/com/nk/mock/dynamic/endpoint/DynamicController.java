@@ -26,8 +26,13 @@ public class DynamicController {
     }
 
     @PostMapping("/response")
-    public ResponseEntity<?> addNewResponse(@RequestBody ResponseRequest request) {
+    public ResponseEntity<?> addNewResponse(@RequestBody @Valid ResponseRequest request) {
         return service.storeNewResponse(request);
+    }
+
+    @DeleteMapping("/response")
+    public ResponseEntity<?> removeResponse(@RequestBody @Valid ResDeleteRequest request) {
+        return service.removeRes(request);
     }
 
     @PutMapping("/response")

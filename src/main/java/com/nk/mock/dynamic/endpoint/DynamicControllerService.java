@@ -104,7 +104,7 @@ public class DynamicControllerService {
     }
 
     public ResponseEntity<?> getEndPoint() {
-        return null;
+        return new ResponseEntity<>(endPointRepository.findAll(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> getEndPoint(Long id) {

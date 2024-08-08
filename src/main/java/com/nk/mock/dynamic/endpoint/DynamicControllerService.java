@@ -127,6 +127,17 @@ public class DynamicControllerService {
     }
 
     public ResponseEntity<?> storeNewResponse(ResponseRequest request) {
-        return null;
+        Optional<EndPoint> endPointOpt = endPointRepository.findById(request.getEndPointId());
+        if (endPointOpt.isEmpty())
+            return new ResponseEntity<>("Invalid Endpoint", HttpStatus.BAD_REQUEST);
+
+        EndPointRes res = EndPointRes.builder()
+                .endPoint(endPointOpt.get())
+                .res(request.getRes())
+                .statusCode(request.getStatusCode())
+                .status(0)
+                .build();
+        resRepository.save(res);
+        return new ResponseEntity<>("Response added", HttpStatus.OK);
     }
 }

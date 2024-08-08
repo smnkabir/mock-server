@@ -90,7 +90,26 @@ public class DynamicControllerService {
     }
 
     public ResponseEntity<?> updateResponseStatus(ResponseStatusUpdateRequest request) {
-        return null;
+        Optional<EndPoint> endPointOpt = endPointRepository.findById(request.getEndpointId());
+        if (endPointOpt.isEmpty())
+            return new ResponseEntity<>("Invalid Endpoint ID", HttpStatus.NOT_FOUND);
+
+        List<EndPointRes> list = new ArrayList<>();
+        Optional<EndPointRes> endPointResOpt = resRepository.findByEndPointAndStatus(endPointOpt.get(), 1);
+        if (endPointResOpt.isPresent()) {
+            EndPointRes endPointRes = endPointResOpt.get();
+            endPointRes.setStatus(0);
+            list.add(endPointRes);
+        }
+        Optional<EndPointRes> byId = resRepository.findById(request.getResId());
+        if (byId.isPresent()) {
+            EndPointRes endPointRes = byId.get();
+            endPointRes.setStatus(1);
+            list.add(endPointRes);
+        }
+
+        resRepository.saveAll(list);
+        return new ResponseEntity<>("Response updated", HttpStatus.OK);
     }
 
     public ResponseEntity<?> getEndPoint() {

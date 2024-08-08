@@ -4,9 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ResponseStatusUpdateRequest {
-    @NotNull
-    private Long endpointId;
+public class ResDeleteRequest {
     @NotNull
     private Long resId;
 }

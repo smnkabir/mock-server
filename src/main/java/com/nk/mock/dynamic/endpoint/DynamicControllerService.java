@@ -115,8 +115,8 @@ public class DynamicControllerService {
         EndPoint endPoint = endPointOpt.get();
         EndPointDto endPointDto = new EndPointDto();
         endPointDto.setTitle(endPoint.getTitle());
-        endPointDto.setPath(endPointDto.getPath());
-        endPointDto.setMethod(endPointDto.getMethod());
+        endPointDto.setPath(endPoint.getPath());
+        endPointDto.setMethod(endPoint.getMethod());
 
         List<EndPointRes> resList = resRepository.findAllByEndPoint(endPoint);
         endPointDto.setResponseList(resList.stream().map(ResponseDto::new).toList());

@@ -18,8 +18,8 @@ public class DynamicController {
         return service.getEndPoint();
     }
 
-    @GetMapping("")
-    public ResponseEntity<?> getEndpoint(@RequestParam(value = "id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEndpoint(@PathVariable(value = "id") Long id) {
         return service.getEndPoint(id);
     }
 

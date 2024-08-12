@@ -19,6 +19,7 @@ public class EndPointRes {
     @JoinColumn(name = "endpoint_id", referencedColumnName = "id")
     private EndPoint endPoint;
     private int statusCode;
+    @Lob
     private String res;
     private int status;
 
